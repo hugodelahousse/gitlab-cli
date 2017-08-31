@@ -85,10 +85,15 @@ func display_issues() {
 	issues_details.Height = ui.TermHeight()
 	issues_details.BorderLabel = "Details"
 
-	ui.Body.AddRows(ui.NewRow(
+	default_layout := []*ui.Row {ui.NewRow(
 		ui.NewCol(6, 0, issues_panel),
 		ui.NewCol(6, 0, issues_details),
-	))
+	)}
+	details_layout := []*ui.Row {
+		ui.NewCol(12, 0, issues_details),
+	}
+
+	ui.Body.Rows = default_layout
 
 	change_selected := func() {
 		if len(issues) == 0 {
@@ -123,13 +128,14 @@ func display_issues() {
 		i = (i + 1) % len(issues)
 		change_selected()
 	})
-	// ui.Handle("/sys/kbd/<right>", func(ui.Event) {
-	// 	ui.Body.AddRows(ui.NewRow(
-	// 		ui.NewCol(12, 0, issues_details),
-	// 	))
-	// 	Update()
-	// 	fmt.Println("wat")
-	// })
+	ui.Handle("/sys/kbd/<right>", func(ui.Event) {
+		ui.Body.Rows = details_layout
+		Update()
+	})
+	ui.Handle("/sys/kbd/<left>", func(ui.Event) {
+		ui.Body.Rows = default_layout
+		Update()
+	})
 
 	loader_ticker := time.NewTicker(time.Millisecond * 100)
 
